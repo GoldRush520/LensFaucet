@@ -115,6 +115,8 @@ def claim_token(address, cfToken, sessionId, path, proxy):
     if line_nums == 4:
         last_line_json = json.loads(response_lines[-1])
         print(f'Claim Grass Token Successfully for {address}, tx hash:{last_line_json["json"][2][0][0]["hash"]}')
+    else:
+        print(f"Claim failed: {response_lines[-1]}")
 
 # 迷宫墙壁数据
 challenge_data = get_challenge()
