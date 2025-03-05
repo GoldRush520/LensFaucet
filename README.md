@@ -1,7 +1,7 @@
-# **Lenscan Faucet 领取脚本**
+# **Lens Faucet 领取脚本**
 
 ## **功能说明**
-该 Python 脚本用于自动领取 Lenscan 测试网的 Faucet 代币，主要功能包括：
+该 Python 脚本用于自动领取 Lens 测试网的代币，主要功能包括：
 
 1. **获取迷宫挑战**：从 `https://testnet.lenscan.io/api/trpc/faucet.getMaze` 获取挑战数据。
 2. **解决迷宫挑战**：通过 BFS（广度优先搜索）算法找到最短路径。
