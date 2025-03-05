@@ -1,0 +1,2 @@
+2captcha_python==1.5.1
+Requests==2.32.3
