@@ -47,13 +47,13 @@ pip install requests twocaptcha
 ## **运行方式**
 ### **方式 1：运行所有钱包**
 ```bash
-python faucet.py
+python main.py
 ```
 
 ### **方式 2：运行指定索引的钱包**
 ```bash
-python faucet.py 0  # 领取 wallets[0] 的 Faucet 代币
-python faucet.py 1  # 领取 wallets[1] 的 Faucet 代币
+python main.py 0  # 领取 wallets[0] 的 Faucet 代币
+python main.py 1  # 领取 wallets[1] 的 Faucet 代币
 ```
 
 ---
