@@ -5,7 +5,7 @@
 
 1. **获取迷宫挑战**：从 `https://testnet.lenscan.io/api/trpc/faucet.getMaze` 获取挑战数据。
 2. **解决迷宫挑战**：通过 BFS（广度优先搜索）算法找到最短路径。
-3. **解决验证码**：使用 `2Captcha` API 自动处理 Turnstile 验证码。
+3. **解决验证码**：使用 [`2Captcha`](https://2captcha.com/?from=22932323) API 自动处理 Turnstile 验证码。
 4. **提交领取请求**：向 `https://testnet.lenscan.io/api/trpc/faucet.claim` 发送领取请求。
 5. **支持代理**：可以使用 `socks5` 或 `http` 代理进行请求。
 
@@ -38,7 +38,7 @@ pip install requests twocaptcha
 ```
 
 ### **配置项说明**
-- `2_captcha_token`：你的 `2Captcha` API 密钥。
+- `2_captcha_token`：你的 [`2Captcha`](https://2captcha.com/?from=22932323) API 密钥。
 - `wallets`：钱包地址列表，每个对象包含：
     - `address`：你的钱包地址。
     - `proxy`（可选）：代理地址（支持 `socks5h` 或 `http`）。
