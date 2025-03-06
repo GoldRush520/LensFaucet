@@ -1,6 +1,9 @@
 import json
 import sys
 import urllib.parse
+import time
+import random
+import string
 
 import requests
 from collections import deque
@@ -100,13 +103,14 @@ def solve_captcha():
         return result
 
 
-def claim_token(address, cf_token, session_id, path, proxy):
+def claim_token(address, cf_token, session_id, page_token, path, proxy):
     url = "https://testnet.lenscan.io/api/trpc/faucet.claim?batch=1"
     data = {
         "0": {
             "json": {
                 "address": address,
                 "cfToken": cf_token,
+                "pageToken": page_token,
                 "gameChallenge": {
                     "sessionId": session_id,
                     "moves": path
@@ -131,11 +135,41 @@ def claim_token(address, cf_token, session_id, path, proxy):
     else:
         print(f"Claim failed: {response_lines[-1]}")
 
+
+def generate_token():
+    secret_key = "lenscan-faucet-token-secret-key"
+
+    # 获取当前时间戳（毫秒级）
+    timestamp = str(int(time.time() * 1000))
+
+    # 生成 16 位随机字符串
+    def generate_random_string(length: int) -> str:
+        chars = string.ascii_letters + string.digits
+        return ''.join(random.choices(chars, k=length))
+
+    random_string = generate_random_string(16)
+    base_string = f"{timestamp}.{random_string}"
+
+    # 计算哈希校验值
+    def compute_hash(input_string: str, secret: str) -> str:
+        hash_value = 0
+        for char in input_string:
+            hash_value = (hash_value << 5) - hash_value + ord(char)
+            hash_value &= 0xFFFFFFFF  # 确保是 32 位整数
+        secret_sum = sum(ord(c) for c in secret)
+        final_hash = (hash_value + secret_sum) & 0xFFFFFFFF  # 确保是 32 位整数
+        return f"{final_hash:08x}"
+
+    hash_value = compute_hash(base_string + secret_key, secret_key)
+    token = f"{base_string}.{hash_value}"
+
+    return token
+
+
 captcha_data = solve_captcha()
 cf_token = captcha_data["code"]
 
-#todo: ⚠️official faucet api is down with hint: Invalid page token. Waiting official faucet update
-page_token = "1741241920913.cd87bd4e05252f2bbd44356afe06c6ef.5c57397631c65911fc7d155e3b18191bfd83602770e16cba5d3bc27de439d961"
+page_token = generate_token()
 # 迷宫墙壁数据
 challenge_data = get_challenge(cf_token, page_token)
 walls_data = challenge_data["walls"]
@@ -155,9 +189,9 @@ if (len(sys.argv) > 1):
     account = accounts[index]
     address = account["address"]
     proxy = account["proxy"]
-    claim_token(address, cf_token, session_id, path, proxy)
+    claim_token(address, cf_token, session_id, page_token, path, proxy)
 else:
     for account in accounts:
         address = account["address"]
         proxy = account["proxy"]
-        claim_token(address, cf_token, session_id, path, proxy)
+        claim_token(address, cf_token, session_id, page_token, path, proxy)
