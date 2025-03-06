@@ -1,5 +1,6 @@
 import json
 import sys
+import urllib.parse
 
 import requests
 from collections import deque
@@ -59,8 +60,20 @@ def solve_maze(walls, start, goal):
     return None  # 无解
 
 
-def get_challenge():
-    url = "https://testnet.lenscan.io/api/trpc/faucet.getMaze?batch=1&input=%7B%220%22%3A%7B%22json%22%3A%7B%22difficulty%22%3A%22hard%22%7D%7D%7D"
+def get_challenge(cf_token, page_token):
+    data = {
+        "0": {
+            "json": {
+                "difficulty": "hard",
+                "cfToken": cf_token,
+                "pageToken": page_token
+            }
+        }
+    }
+    json_str = json.dumps(data)  # 转换为 JSON 字符串
+    encoded_json = urllib.parse.quote(json_str)  # URL 编码
+
+    url = f"https://testnet.lenscan.io/api/trpc/faucet.getMaze?batch=1&input={encoded_json}"
 
     response = requests.get(url, headers=headers)
     print(response.text)
@@ -118,8 +131,13 @@ def claim_token(address, cfToken, sessionId, path, proxy):
     else:
         print(f"Claim failed: {response_lines[-1]}")
 
+captcha_data = solve_captcha()
+cfToken = captcha_data["code"]
+
+#todo: ⚠️official faucet api is down with hint: Invalid page token. Waiting official faucet update
+page_token = "1741241920913.cd87bd4e05252f2bbd44356afe06c6ef.5c57397631c65911fc7d155e3b18191bfd83602770e16cba5d3bc27de439d961"
 # 迷宫墙壁数据
-challenge_data = get_challenge()
+challenge_data = get_challenge(cfToken, page_token)
 walls_data = challenge_data["walls"]
 
 # 起点和终点
@@ -129,8 +147,6 @@ sessionId = challenge_data["sessionId"]
 
 # 计算路径
 path = solve_maze(walls_data, start_position, goal_position)
-captcha_data = solve_captcha()
-cfToken = captcha_data["code"]
 
 accounts = config["wallets"]
 
