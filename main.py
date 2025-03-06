@@ -100,15 +100,15 @@ def solve_captcha():
         return result
 
 
-def claim_token(address, cfToken, sessionId, path, proxy):
+def claim_token(address, cf_token, session_id, path, proxy):
     url = "https://testnet.lenscan.io/api/trpc/faucet.claim?batch=1"
     data = {
         "0": {
             "json": {
                 "address": address,
-                "cfToken": cfToken,
+                "cfToken": cf_token,
                 "gameChallenge": {
-                    "sessionId": sessionId,
+                    "sessionId": session_id,
                     "moves": path
                 }
             }
@@ -132,18 +132,18 @@ def claim_token(address, cfToken, sessionId, path, proxy):
         print(f"Claim failed: {response_lines[-1]}")
 
 captcha_data = solve_captcha()
-cfToken = captcha_data["code"]
+cf_token = captcha_data["code"]
 
 #todo: ⚠️official faucet api is down with hint: Invalid page token. Waiting official faucet update
 page_token = "1741241920913.cd87bd4e05252f2bbd44356afe06c6ef.5c57397631c65911fc7d155e3b18191bfd83602770e16cba5d3bc27de439d961"
 # 迷宫墙壁数据
-challenge_data = get_challenge(cfToken, page_token)
+challenge_data = get_challenge(cf_token, page_token)
 walls_data = challenge_data["walls"]
 
 # 起点和终点
 start_position = (0, 0)
 goal_position = (challenge_data["goalPos"]["row"], challenge_data["goalPos"]["col"])
-sessionId = challenge_data["sessionId"]
+session_id = challenge_data["sessionId"]
 
 # 计算路径
 path = solve_maze(walls_data, start_position, goal_position)
@@ -155,9 +155,9 @@ if (len(sys.argv) > 1):
     account = accounts[index]
     address = account["address"]
     proxy = account["proxy"]
-    claim_token(address, cfToken, sessionId, path, proxy)
+    claim_token(address, cf_token, session_id, path, proxy)
 else:
     for account in accounts:
         address = account["address"]
         proxy = account["proxy"]
-        claim_token(address, cfToken, sessionId, path, proxy)
+        claim_token(address, cf_token, session_id, path, proxy)
