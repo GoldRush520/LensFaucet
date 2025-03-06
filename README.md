@@ -1,4 +1,5 @@
 # **Lens Faucet 领取脚本**
+**更多脚本分享, 关注我的[X](https://x.com/0Xiaofan22921)**
 
 ## **功能说明**
 该 Python 脚本用于自动领取 Lens 测试网的代币，主要功能包括：
